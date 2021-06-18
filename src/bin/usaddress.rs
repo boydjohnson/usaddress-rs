@@ -654,19 +654,14 @@ fn main() {
     let model = Model::new(ADDRESS_PARSER_DATA).unwrap();
 
     if let Some(address) = std::env::args().skip(1).next() {
-        println!("{:?}", address);
         let tokens = tokenize(&address);
-        println!("tokens: {:?}", tokens);
         let tok = tokens.clone();
 
         let mut tagger = model.tagger().unwrap();
 
         let features = tokens_to_features(tokens);
-        for t in &features {
-            println!("{:?}", t);
-        }
 
-        let val = tagger.tag(&&features).unwrap();
+        let val = tagger.tag(&features).unwrap();
 
         for (tok, label) in tok.iter().zip(val.iter()) {
             println!("{}: {}", tok, label);
