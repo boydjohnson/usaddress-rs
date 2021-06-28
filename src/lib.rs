@@ -1,4 +1,4 @@
-pub const ADDRESS_PARSER_DATA: &'static [u8] = include_bytes!("../usaddr.crfsuite");
+pub const ADDRESS_PARSER_DATA: &[u8] = include_bytes!("../usaddr.crfsuite");
 mod error;
 mod features;
 mod tokenize;
@@ -16,7 +16,7 @@ lazy_static::lazy_static! {
 }
 
 pub fn parse(address: &str) -> Result<Vec<(String, String)>, crate::error::Error> {
-    let tokens = tokenize(&address);
+    let tokens = tokenize(address);
     let tok = tokens.clone();
 
     let mut tagger = MODEL.tagger()?;

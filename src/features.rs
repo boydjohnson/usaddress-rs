@@ -22,7 +22,7 @@ lazy_static::lazy_static! {
     static ref DIRECTIONS: BTreeSet<&'static str> = ["n", "s", "e", "w",
     "ne", "nw", "se", "sw",
     "north", "south", "east", "west",
-    "northeast", "northwest", "southeast", "southwest"].iter().map(|c| *c).collect();
+    "northeast", "northwest", "southeast", "southwest"].iter().copied().collect();
 }
 
 lazy_static::lazy_static! {
@@ -615,7 +615,7 @@ static ref STREET_NAMES: BTreeSet<&'static str> = [
     "xing",
     "xrd",
     "xrds",
-].iter().map(|c| *c).collect();
+].iter().copied().collect();
 }
 
 fn trailing_zeros(token: &str) -> &str {
@@ -721,7 +721,7 @@ fn token_features(token: &str) -> Vec<Attribute> {
 
 pub fn tokens_to_features(address: Vec<String>) -> Vec<Vec<Attribute>> {
     let (mut feat, mut prev) = if let Some(first) = address.first() {
-        let seq = token_features(&first);
+        let seq = token_features(first);
         (Some(vec![seq.clone()]), Some(seq))
     } else {
         (None, None)
@@ -757,15 +757,11 @@ pub fn tokens_to_features(address: Vec<String>) -> Vec<Vec<Attribute>> {
         last.push(Attribute::new("address.end", 1.0))
     }
 
-    if let Some(second) = feat.as_mut().map(|f| f.iter_mut().skip(1).next()).flatten() {
+    if let Some(second) = feat.as_mut().map(|f| f.get_mut(1)).flatten() {
         second.push(Attribute::new("previous:address.start", 1.0));
     }
 
-    if let Some(second_to_last) = feat
-        .as_mut()
-        .map(|f| f.iter_mut().rev().skip(1).next())
-        .flatten()
-    {
+    if let Some(second_to_last) = feat.as_mut().map(|f| f.iter_mut().rev().nth(1)).flatten() {
         second_to_last.push(Attribute::new("next:address.end", 1.0));
     }
 

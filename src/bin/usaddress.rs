@@ -3,7 +3,7 @@ use crfs::Model;
 use std::io::{BufWriter, Write};
 use usaddress::ADDRESS_PARSER_DATA;
 
-const LABELS: &'static [&'static str] = &[
+const _LABELS: &[&str] = &[
     "AddressNumber",
     "StreetNamePreDirectional",
     "StreetName",
@@ -35,7 +35,7 @@ const LABELS: &'static [&'static str] = &[
 fn main() {
     let _model = Model::new(ADDRESS_PARSER_DATA).unwrap();
     let mut out = BufWriter::with_capacity(1_000, std::io::stdout());
-    if let Some(address) = std::env::args().skip(1).next() {
+    if let Some(address) = std::env::args().nth(1) {
         match usaddress::parse(&address) {
             Ok(labelled) => {
                 write!(&mut out, "<AddressString>").expect("Unable to write to stdout");
